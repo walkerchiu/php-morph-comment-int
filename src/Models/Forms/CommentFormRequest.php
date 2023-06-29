@@ -148,6 +148,16 @@ class CommentFormRequest extends FormRequest
                 && isset($data['morph_id'])
             ) {
                 if (
+                    config('wk-morph-comment.onoff.site-cms')
+                    && !empty(config('wk-core.class.site-cms.site'))
+                    && $data['morph_type'] == config('wk-core.class.site-cms.site')
+                ) {
+                    $result = DB::table(config('wk-core.table.site-cms.sites'))
+                                ->where('id', $data['morph_id'])
+                                ->exists();
+                    if (!$result)
+                        $validator->errors()->add('morph_id', trans('php-core::validation.exists'));
+                } elseif (
                     config('wk-morph-comment.onoff.site-mall')
                     && !empty(config('wk-core.class.site-mall.site'))
                     && $data['morph_type'] == config('wk-core.class.site-mall.site')
